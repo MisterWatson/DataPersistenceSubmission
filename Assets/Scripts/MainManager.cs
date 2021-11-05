@@ -12,13 +12,22 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public GameObject GameOverText;
+
+    public Text bestScoreText;
     
     private bool m_Started = false;
     private int m_Points;
-    
-    private bool m_GameOver = false;
 
+    private SceneHandler sceneHandler;
     
+    private bool m_GameOver = false;    
+
+    private void Awake()
+    {
+        UpdateHighScoreText();
+        sceneHandler = SceneHandler.sceneHandler;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -68,9 +77,24 @@ public class MainManager : MonoBehaviour
         ScoreText.text = $"Score : {m_Points}";
     }
 
+    private void UpdateHighScoreText()
+    {
+        bestScoreText.text = "Best Score: " + SceneHandler.highScorePlayerName + " : " + SceneHandler.highScore;
+    }
+
     public void GameOver()
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+
+        // update high score if it's larger than the current one
+        if (m_Points > SceneHandler.highScore)
+        {
+            SceneHandler.highScore = m_Points;
+            SceneHandler.highScorePlayerName = SceneHandler.playerName;
+            UpdateHighScoreText();
+            sceneHandler.SaveHighScoreAndPlayer();
+        }
+
     }
 }
