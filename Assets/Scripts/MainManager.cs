@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -54,7 +55,7 @@ public class MainManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 m_Started = true;
-                float randomDirection = Random.Range(-1.0f, 1.0f);
+                float randomDirection = UnityEngine.Random.Range(-1.0f, 1.0f);
                 Vector3 forceDir = new Vector3(randomDirection, 1, 0);
                 forceDir.Normalize();
 
@@ -82,19 +83,25 @@ public class MainManager : MonoBehaviour
         bestScoreText.text = "Best Score: " + SceneHandler.highScorePlayerName + " : " + SceneHandler.highScore;
     }
 
+    public void QuitGame()
+    {
+        sceneHandler.QuitApplication();
+    }
+
     public void GameOver()
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+
+        sceneHandler.top5HighScoresAndPlayers.Add(new Tuple<int, string>(m_Points, SceneHandler.playerName));
 
         // update high score if it's larger than the current one
         if (m_Points > SceneHandler.highScore)
         {
             SceneHandler.highScore = m_Points;
             SceneHandler.highScorePlayerName = SceneHandler.playerName;
-            UpdateHighScoreText();
-            sceneHandler.SaveHighScoreAndPlayer();
+            UpdateHighScoreText();            
         }
-
+        sceneHandler.SaveHighScoreAndPlayer();
     }
 }
